@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { ESLint } from 'eslint';
 import path from 'path';
 
-// Interfaz local para los mensajes de ESLint
 interface LintMessage {
   message: string;
   ruleId?: string | null;
@@ -15,7 +14,7 @@ interface OllamaResponse {
   response?: string;
 }
 
-const DEMO_MESSAGE = '⚠️ Modo demo: IA local no disponible. Para probar correcciones con IA: ollama pull qwen2.5-coder:1.5b';
+const DEMO_MESSAGE = '⚠️ Demo mode: Local AI not available. To test AI corrections: ollama pull qwen2.5-coder:1.5b';
 
 async function isOllamaAvailable(): Promise<boolean> {
   try {
@@ -35,13 +34,18 @@ async function isOllamaAvailable(): Promise<boolean> {
 
 async function runESLint(code: string) {
   try {
+    const configPath = path.resolve(process.cwd(), 'frontend/eslint.config.js');
+    console.log('ESLint config path:', configPath);
+    
     const eslint = new ESLint({
-      overrideConfigFile: path.resolve(process.cwd(), 'eslint.config.js'),
+      overrideConfigFile: configPath,
       fix: true,
     });
 
     const results = await eslint.lintText(code);
     const result = results[0];
+
+    console.log('ESLint results:', result.messages.length, 'errors');
 
     return {
       errors: result.messages as LintMessage[],
@@ -99,8 +103,11 @@ ${code}
 }
 
 export async function POST(req: Request) {
+  console.log('API analyze called');
+  
   try {
     const { code } = await req.json();
+    console.log('Code length:', code?.length);
 
     if (!code) {
       return NextResponse.json(
@@ -109,13 +116,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1️⃣ ESLint autofix
     const lintResult = await runESLint(code);
-
     const errors = lintResult.errors;
     let finalCode = lintResult.fixedCode;
 
-    // 2️⃣ If errors remain → use model (if available)
+    console.log('Errors found:', errors.length);
+
     const ollamaAvailable = await isOllamaAvailable();
     let modelFixedCode = finalCode;
 
@@ -123,13 +129,10 @@ export async function POST(req: Request) {
       if (ollamaAvailable) {
         modelFixedCode = await callOllama(finalCode, errors);
 
-        // 3️⃣ Validate model output: run ESLint on it and check for new errors
         const validationResult = await runESLint(modelFixedCode);
         if (validationResult.errors.length === 0) {
-          // Model output is clean → use it
           finalCode = modelFixedCode;
         } else {
-          // Model introduced new errors → revert to ESLint-fixed code
           console.warn('Model introduced new errors; reverting to ESLint output.');
         }
       }

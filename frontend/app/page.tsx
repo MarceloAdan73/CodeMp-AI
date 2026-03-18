@@ -134,6 +134,7 @@ export default function Home() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       
       const data: AnalysisResult = await res.json();
+      console.log('API Response:', data);
       setAnalysis(data);
       if (data.mode === 'demo') setDemoMode(true);
       setMobileTab('problems');
