@@ -36,7 +36,20 @@ async function runESLint(code: string) {
     console.log('Running ESLint...');
     
     const eslint = new ESLint({
-      baseConfig: {
+      overrideConfigFile: true,
+      overrideConfig: [{
+        languageOptions: {
+          ecmaVersion: 2022,
+          sourceType: 'module',
+          globals: {
+            console: 'readonly',
+            window: 'readonly',
+            document: 'readonly',
+            require: 'readonly',
+            module: 'readonly',
+            exports: 'readonly',
+          },
+        },
         rules: {
           'semi': ['error', 'always'],
           'quotes': ['error', 'single'],
@@ -44,13 +57,12 @@ async function runESLint(code: string) {
           'no-var': 'error',
           'prefer-const': 'error',
           'no-unused-vars': ['error', { 
-            'argsIgnorePattern': '^_',
-            'varsIgnorePattern': '^_',
-            'caughtErrorsIgnorePattern': '^_'
+            argsIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
           }],
           'eqeqeq': ['error', 'always'],
         },
-      },
+      }],
       fix: true,
     });
 
