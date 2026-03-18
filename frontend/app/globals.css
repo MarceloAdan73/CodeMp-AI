@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #0a0a0f;
+    --card: #12121a;
+    --card-hover: #1a1a24;
+    --border: #2a2a35;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --text-primary: #e5e5e5;
+    --text-secondary: #9ca3af;
+    --accent-glow: rgba(59, 130, 246, 0.5);
+  }
+
+  [data-theme="light"] {
+    --background: #f8fafc;
+    --card: #ffffff;
+    --card-hover: #f1f5f9;
+    --border: #e2e8f0;
+    --primary: #3b82f6;
+    --primary-dark: #2563eb;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-glow: rgba(59, 130, 246, 0.3);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-space {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  
+  .font-mono-custom {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer utilities {
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) var(--card);
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: var(--card);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary), #8b5cf6);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-dark), #7c3aed);
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+  }
+
+  @keyframes softPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.02); }
+  }
+
+  .animate-soft-pulse {
+    animation: softPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+    50% { box-shadow: 0 0 20px 5px var(--accent-glow); }
+  }
+
+  .focus-glow:focus-within {
+    animation: glowPulse 2s infinite;
+  }
+
+  /* Nuevas animaciones */
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .animate-fadeInScale {
+    animation: fadeInScale 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
+
+/* Estilos para CodeMirror */
+.cm-editor {
+  background: var(--card) !important;
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--card), var(--card)), 
+                    linear-gradient(135deg, var(--primary), #8b5cf6);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: all 0.3s ease;
+}
+
+.cm-editor:focus-within {
+  border-image-slice: 1;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.cm-gutters {
+  background: #0f0f17 !important;
+  border-right: 1px solid var(--border) !important;
+  border-radius: 1rem 0 0 1rem;
+}
+
+.cm-activeLineGutter {
+  background-color: #1e1e2a !important;
+}
