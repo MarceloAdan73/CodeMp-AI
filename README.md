@@ -1,6 +1,6 @@
 # CodeMp-AI
 
-Herramienta de análisis y corrección automática de código que combina **ESLint** con un modelo de IA local (**Ollama**) para ofrecer sugerencias inteligentes.
+AI-powered code analysis and automatic code fixing tool that combines **ESLint** with a local AI model (**Ollama**) for intelligent suggestions.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/)
@@ -13,101 +13,101 @@ Herramienta de análisis y corrección automática de código que combina **ESLi
 
 ## Demo
 
-**Pruébalo ahora:** [https://codemp-ai.vercel.app](https://codemp-ai.vercel.app)
+**Try it now:** [https://codemp-ai.vercel.app](https://codemp-ai.vercel.app)
 
-> **Nota:** La interfaz funciona online. La IA requiere Ollama local (ver [Requisitos](#requisitos)).
+> **Note:** The interface works online. AI requires local Ollama (see [Requirements](#requirements)).
 
-## 💡 ¿Por qué CodeMp AI?
+## 💡 Why CodeMp-AI?
 
-Demuestra integración de IA local (Ollama) con Next.js, incluyendo:
+Demonstrates local AI (Ollama) integration with Next.js, including:
 
-- 🤖 **Modelos locales** sin APIs externas ni costos de servidor
-- 🎨 **UX profesional** con loading states animados (3 etapas)
-- 🛡️ **Validación inteligente** contra errores de IA
-- 🚀 **Arquitectura moderna** (Next.js 15, TypeScript, Tailwind)
-- 🌐 **Modo demo** que funciona en Vercel sin Ollama
+- 🤖 **Local models** - no external APIs or server costs
+- 🎨 **Professional UX** with animated loading states (3 stages)
+- 🛡️ **Smart validation** against AI errors
+- 🚀 **Modern architecture** (Next.js 15, TypeScript, Tailwind)
+- 🌐 **Demo mode** that works on Vercel without Ollama
 
-## Características
+## Features
 
-- **Editor de código** con soporte para TypeScript, TSX, JavaScript y Python
-- **Análisis con ESLint** y correcciones automáticas
-- **IA local con Ollama** para sugerencias inteligentes
-- **Preview de cambios** antes de aplicar correcciones
-- **Historial persistente** de análisis
-- **Navegación directa** desde errores a líneas de código
-- **Responsive** para desktop y mobile
-- **Modo demo** cuando Ollama no está disponible
+- **Code editor** with support for TypeScript, TSX, JavaScript, and Python
+- **ESLint analysis** with automatic fixes
+- **Local AI with Ollama** for intelligent suggestions
+- **Preview changes** before applying corrections
+- **Persistent history** of analyses
+- **Direct navigation** from errors to code lines
+- **Responsive** for desktop and mobile
+- **Demo mode** when Ollama is not available
 
-## Requisitos
+## Requirements
 
 - [Node.js](https://nodejs.org/) 18+
 - [Ollama](https://ollama.com/download)
-- Modelo `qwen2.5-coder:1.5b`
+- Model `qwen2.5-coder:1.5b`
 
 ```bash
 ollama pull qwen2.5-coder:1.5b
 ```
 
-### Cambio de modelo
+### Changing the Model
 
-Para usar otro modelo, edita `frontend/app/api/analyze/route.ts` línea 69:
+To use a different model, edit `frontend/app/api/analyze/route.ts` line 69:
 
 ```typescript
-model: 'deepseek-coder:1.3b'  // Más rápido
+model: 'deepseek-coder:1.3b'  // Faster
 ```
 
-| Modelo | Velocidad | Precisión |
-|--------|-----------|-----------|
-| `deepseek-coder:1.3b` | 8-12s | Media |
-| `qwen2.5-coder:1.5b` | 15-25s | Buena |
-| `deepseek-coder:6.7b` | 30-45s | Alta |
+| Model | Speed | Accuracy |
+|-------|-------|----------|
+| `deepseek-coder:1.3b` | 8-12s | Medium |
+| `qwen2.5-coder:1.5b` | 15-25s | Good |
+| `deepseek-coder:6.7b` | 30-45s | High |
 
-## Instalación
+## Installation
 
 ```bash
 git clone https://github.com/MarceloAdan73/CodeMp-AI.git
-cd codemp-ai/frontend
+cd CodeMp-AI/frontend
 npm install
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000)
 
-## Uso
+## Usage
 
-1. Selecciona un lenguaje de programación
-2. Escribe o pega tu código
-3. Presiona `Run Analysis` o `Ctrl+Enter`
-4. Revisa los errores en el panel derecho
-5. Usa `Preview Changes` para ver diferencias o `Apply Fix` para aplicar
+1. Select a programming language
+2. Write or paste your code
+3. Press `Run Analysis` or `Ctrl+Enter`
+4. Review errors in the right panel
+5. Use `Preview Changes` to see diffs or `Apply Fix` to apply
 
-### Atajos de teclado
+### Keyboard Shortcuts
 
-| Atajo | Acción |
-|-------|--------|
-| `Ctrl+Enter` | Analizar código |
-| `Ctrl+H` | Ver historial |
-| `ESC` | Cerrar modal |
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Enter` | Analyze code |
+| `Ctrl+H` | View history |
+| `ESC` | Close modal |
 
-## 📸 Capturas
+## 📸 Screenshots
 
-### Escritorio
+### Desktop
 
-| Editor | Panel de Problemas | Preview de Cambios |
-|--------|-------------------|-------------------|
+| Editor | Problems Panel | Changes Preview |
+|--------|---------------|----------------|
 | ![Editor](frontend/public/editor-code.png) | ![Problems](frontend/public/problems-panel.png) | ![Diff](frontend/public/modal-diff.png) |
 
-### Móvil e Historial
+### Mobile & History
 
-| Vista Móvil | Historial | Banner Demo |
-|-------------|-----------|-------------|
+| Mobile View | History | Demo Banner |
+|-------------|---------|-------------|
 | ![Mobile](frontend/public/mobile-view.png) | ![History](frontend/public/history-modal.png) | ![Demo](frontend/public/demo-banner.png) |
 
-> **Nota:** Para Vercel, establece la carpeta `frontend` como root del proyecto.
+> **Note:** For Vercel, set the `frontend` folder as the project root.
 
-## Configuración de ESLint
+## ESLint Configuration
 
-Reglas habilitadas en `eslint.config.js`:
+Rules enabled in `eslint.config.js`:
 
 ```javascript
 rules: {
@@ -121,47 +121,47 @@ rules: {
 }
 ```
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 frontend/
 ├── app/
 │   ├── api/
 │   │   ├── analyze/route.ts    # API: ESLint + Ollama
-│   │   └── health/route.ts     # Verificación de Ollama
-│   ├── page.tsx                # Página principal
-│   └── layout.tsx              # Layout raíz
+│   │   └── health/route.ts     # Ollama health check
+│   ├── page.tsx                # Main page
+│   └── layout.tsx              # Root layout
 ├── components/
-│   ├── CodeEditor.tsx          # Editor CodeMirror
-│   ├── DiffViewer.tsx          # Vista de cambios
-│   ├── AnalysisSkeleton.tsx    # Estados de carga
-│   └── DemoBanner.tsx          # Banner modo demo
+│   ├── CodeEditor.tsx          # CodeMirror editor
+│   ├── DiffViewer.tsx          # Changes viewer
+│   ├── AnalysisSkeleton.tsx    # Loading states
+│   └── DemoBanner.tsx          # Demo mode banner
 └── hooks/
     └── useTheme.tsx            # Theme provider
 ```
 
 ## 🗺️ Roadmap
 
-- [ ] Selector de modelo de IA en la UI
-- [ ] Soporte para más lenguajes (Java, Go, Rust)
-- [ ] Exportar reportes (PDF/Markdown)
-- [ ] Compartir código por URL
-- [ ] Tests automatizados con Jest
+- [ ] AI model selector in UI
+- [ ] Support for more languages (Java, Go, Rust)
+- [ ] Export reports (PDF/Markdown)
+- [ ] Share code via URL
+- [ ] Automated tests with Jest
 
-## Tecnologías
+## Technologies
 
-- **Next.js 15** - Framework React
-- **TypeScript** - Tipado estático
-- **Tailwind CSS** - Estilos
-- **CodeMirror 6** - Editor de código
+- **Next.js 15** - React Framework
+- **TypeScript** - Static typing
+- **Tailwind CSS** - Styling
+- **CodeMirror 6** - Code editor
 - **ESLint 9** - Linting
-- **Ollama** - Motor IA local
-- **Framer Motion** - Animaciones
+- **Ollama** - Local AI engine
+- **Framer Motion** - Animations
 
-## Contribuir
+## Contributing
 
-Las contribuciones son bienvenidas. Abre un [issue](https://github.com/MarceloAdan73/CodeMp-AI/issues) o [PR](https://github.com/MarceloAdan73/CodeMp-AI/pulls).
+Contributions are welcome. Open an [issue](https://github.com/MarceloAdan73/CodeMp-AI/issues) or [PR](https://github.com/MarceloAdan73/CodeMp-AI/pulls).
 
-## Licencia
+## License
 
 [MIT](LICENSE) - Marcelo Palma
