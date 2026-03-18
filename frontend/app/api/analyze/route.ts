@@ -34,18 +34,32 @@ async function isOllamaAvailable(): Promise<boolean> {
 
 async function runESLint(code: string) {
   try {
-    const configPath = path.resolve(process.cwd(), 'frontend/eslint.config.js');
-    console.log('ESLint config path:', configPath);
+    console.log('Running ESLint...');
     
     const eslint = new ESLint({
-      overrideConfigFile: configPath,
+      baseConfig: {
+        rules: {
+          'semi': ['error', 'always'],
+          'quotes': ['error', 'single'],
+          'indent': ['error', 2],
+          'no-var': 'error',
+          'prefer-const': 'error',
+          'no-unused-vars': ['error', { 
+            'argsIgnorePattern': '^_',
+            'varsIgnorePattern': '^_',
+            'caughtErrorsIgnorePattern': '^_'
+          }],
+          'eqeqeq': ['error', 'always'],
+        },
+      },
       fix: true,
     });
 
     const results = await eslint.lintText(code);
     const result = results[0];
 
-    console.log('ESLint results:', result.messages.length, 'errors');
+    console.log('ESLint errors:', result.messages);
+    console.log('Fixed code:', result.output);
 
     return {
       errors: result.messages as LintMessage[],
