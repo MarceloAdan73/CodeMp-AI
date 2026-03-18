@@ -43,7 +43,6 @@ export default function Home() {
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const [currentLanguage, setCurrentLanguage] = useState<string>(LANGUAGES[0].id);
   const [demoMode, setDemoMode] = useState<boolean>(true);
-  const [ollamaAvailable, setOllamaAvailable] = useState<boolean | null>(null);
   
   const editorRef = useRef<CodeEditorRef>(null);
 
@@ -51,12 +50,11 @@ export default function Home() {
     fetch('/api/health')
       .then(res => res.json())
       .then(data => {
-        setOllamaAvailable(data.available);
         if (data.available) {
           setDemoMode(false);
         }
       })
-      .catch(() => setOllamaAvailable(false));
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
