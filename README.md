@@ -13,7 +13,7 @@ AI-powered code analysis and automatic code fixing tool that combines **ESLint**
 
 ## Demo
 
-**Try it now:** [https://codemp-ai.vercel.app](https://codemp-ai.vercel.app)
+**Try it now:** [https://code-mp-ai.vercel.app](https://code-mp-ai.vercel.app)
 
 > **Note:** The interface works online. AI requires local Ollama (see [Requirements](#requirements)).
 
