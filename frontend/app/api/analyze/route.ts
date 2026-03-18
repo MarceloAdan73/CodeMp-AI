@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { ESLint } from 'eslint';
-import path from 'path';
 
 interface LintMessage {
   message: string;
