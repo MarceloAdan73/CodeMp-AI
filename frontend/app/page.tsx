@@ -176,47 +176,59 @@ export default function Home() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="h-14 flex items-center justify-between px-6 border-b border-white/5 bg-[#111113]"
+        className="h-12 md:h-14 flex items-center justify-between px-2 md:px-6 border-b border-white/5 bg-[#111113]"
       >
-        <div className="flex items-center gap-4">
-          <h1 className="text-sm font-semibold tracking-wide text-gray-300">
+        <div className="flex items-center gap-2 md:gap-4">
+          <h1 className="text-xs md:text-sm font-semibold tracking-wide text-gray-300">
             CodeMp AI
           </h1>
           {analysis && (
-            <div className="flex items-center gap-2 text-xs">
-              <span className="px-2 py-1 bg-red-500/10 text-red-400 rounded">
-                {analysis.errores.filter((e: LintError) => e.severity === 2).length} errors
+            <div className="flex items-center gap-1 md:gap-2 text-xs">
+              <span className="hidden sm:inline px-1.5 md:px-2 py-0.5 md:py-1 bg-red-500/10 text-red-400 rounded text-xs">
+                {analysis.errores.filter((e: LintError) => e.severity === 2).length}
               </span>
-              <span className="px-2 py-1 bg-yellow-500/10 text-yellow-400 rounded">
-                {analysis.errores.filter((e: LintError) => e.severity === 1).length} warnings
+              <span className="sm:hidden px-1.5 py-0.5 bg-red-500/10 text-red-400 rounded text-xs">
+                {analysis.errores.filter((e: LintError) => e.severity === 2).length}🔴
+              </span>
+              <span className="hidden sm:inline px-1.5 md:px-2 py-0.5 md:py-1 bg-yellow-500/10 text-yellow-400 rounded text-xs">
+                {analysis.errores.filter((e: LintError) => e.severity === 1).length}
+              </span>
+              <span className="sm:hidden px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 rounded text-xs">
+                {analysis.errores.filter((e: LintError) => e.severity === 1).length}🟡
               </span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <button
             onClick={() => setShowHistory(!showHistory)}
-            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-sm transition relative group"
+            className="px-2 md:px-3 py-1 md:py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-xs md:text-sm transition relative"
             title="Ver historial de analisis (Ctrl+H)"
           >
-            Historial
+            <span className="hidden sm:inline">Historial</span>
+            <span className="sm:hidden">📋</span>
           </button>
 
           <button
             onClick={() => { void handleAnalyze(); }}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-1.5 rounded-md text-sm transition disabled:opacity-50 flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 px-2 md:px-4 py-1 md:py-1.5 rounded-md text-xs md:text-sm transition disabled:opacity-50 flex items-center gap-1 md:gap-2"
             title="Analizar codigo (Ctrl+Enter)"
           >
             {loading && (
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                className="w-3 h-3 md:w-4 md:h-4 border-2 border-white/30 border-t-white rounded-full"
               />
             )}
-            {loading ? 'Analizando...' : 'Run Analysis'}
+            {loading ? (
+              <span className="hidden sm:inline">Analizando...</span>
+            ) : (
+              <span className="hidden sm:inline">Run Analysis</span>
+            )}
+            {loading ? '⏳' : '▶'}
           </button>
         </div>
       </motion.header>
