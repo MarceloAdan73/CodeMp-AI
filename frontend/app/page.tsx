@@ -176,7 +176,7 @@ export default function Home() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="h-12 md:h-14 flex items-center justify-between px-2 md:px-6 border-b border-white/5 bg-[#111113]"
+        className="h-14 md:h-14 flex items-center justify-between px-2 md:px-6 border-b border-white/5 bg-[#111113]"
       >
         <div className="flex items-center gap-2 md:gap-4">
           <h1 className="text-xs md:text-sm font-semibold tracking-wide text-gray-300">
@@ -184,16 +184,10 @@ export default function Home() {
           </h1>
           {analysis && (
             <div className="flex items-center gap-1 md:gap-2 text-xs">
-              <span className="hidden sm:inline px-1.5 md:px-2 py-0.5 md:py-1 bg-red-500/10 text-red-400 rounded text-xs">
-                {analysis.errores.filter((e: LintError) => e.severity === 2).length}
-              </span>
-              <span className="sm:hidden px-1.5 py-0.5 bg-red-500/10 text-red-400 rounded text-xs">
+              <span className="px-1.5 py-0.5 bg-red-500/10 text-red-400 rounded text-xs">
                 {analysis.errores.filter((e: LintError) => e.severity === 2).length}🔴
               </span>
-              <span className="hidden sm:inline px-1.5 md:px-2 py-0.5 md:py-1 bg-yellow-500/10 text-yellow-400 rounded text-xs">
-                {analysis.errores.filter((e: LintError) => e.severity === 1).length}
-              </span>
-              <span className="sm:hidden px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 rounded text-xs">
+              <span className="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-400 rounded text-xs">
                 {analysis.errores.filter((e: LintError) => e.severity === 1).length}🟡
               </span>
             </div>
@@ -207,7 +201,7 @@ export default function Home() {
             title="Ver historial de analisis (Ctrl+H)"
           >
             <span className="hidden sm:inline">Historial</span>
-            <span className="sm:hidden">📋</span>
+            <span className="sm:hidden text-[10px]">Hist</span>
           </button>
 
           <button
@@ -216,19 +210,22 @@ export default function Home() {
             className="bg-blue-600 hover:bg-blue-700 px-2 md:px-4 py-1 md:py-1.5 rounded-md text-xs md:text-sm transition disabled:opacity-50 flex items-center gap-1 md:gap-2"
             title="Analizar codigo (Ctrl+Enter)"
           >
-            {loading && (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                className="w-3 h-3 md:w-4 md:h-4 border-2 border-white/30 border-t-white rounded-full"
-              />
-            )}
             {loading ? (
-              <span className="hidden sm:inline">Analizando...</span>
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-3 h-3 md:w-4 md:h-4 border-2 border-white/30 border-t-white rounded-full"
+                />
+                <span className="hidden sm:inline">Analizando...</span>
+                <span className="sm:hidden text-[10px]">...</span>
+              </>
             ) : (
-              <span className="hidden sm:inline">Run Analysis</span>
+              <>
+                <span className="hidden sm:inline">Run Analysis</span>
+                <span className="sm:hidden text-[10px]">Run</span>
+              </>
             )}
-            {loading ? '⏳' : '▶'}
           </button>
         </div>
       </motion.header>
