@@ -1,5 +1,7 @@
 # CodeMp-AI
 
+![CI](https://github.com/MarceloAdan73/CodeMp-AI/actions/workflows/ci.yml/badge.svg)
+
 AI-powered code analysis and automatic code fixing tool that combines **ESLint** with a local AI model (**Ollama**) for intelligent suggestions.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
