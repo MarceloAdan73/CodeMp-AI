@@ -15,7 +15,7 @@ interface OllamaResponse {
 
 const DEMO_MESSAGE = '⚠️ Demo mode: Local AI not available. To test AI corrections: ollama pull qwen2.5-coder:1.5b';
 
-async function isOllamaAvailable(): Promise<boolean> {
+async function checkOllamaAvailability(): Promise<boolean> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -85,7 +85,7 @@ async function runESLint(code: string) {
   }
 }
 
-async function callOllama(code: string, errors: LintMessage[]) {
+async function analyzeWithOllama(code: string, errors: LintMessage[]) {
   try {
     const errorList = errors
       .map(e => `- ${e.message} (${e.ruleId || 'unknown'}) at line ${e.line || '?'}`)
@@ -127,6 +127,19 @@ ${code}
   }
 }
 
+async function analyzeWithGemini(_code: string, _errors: LintMessage[]): Promise<string | null> {
+  return null;
+}
+
+async function validateCorrection(originalCode: string, correctedCode: string): Promise<string> {
+  const validationResult = await runESLint(correctedCode);
+  if (validationResult.errors.length === 0) {
+    return correctedCode;
+  }
+  console.warn('Model introduced new errors; reverting to ESLint output.');
+  return originalCode;
+}
+
 export async function POST(req: Request) {
   console.log('API analyze called');
   
@@ -143,43 +156,37 @@ export async function POST(req: Request) {
 
     const lintResult = await runESLint(code);
     const errors = lintResult.errors;
-    let finalCode = lintResult.fixedCode;
+    const eslintFixedCode = lintResult.fixedCode;
 
     console.log('Errors found:', errors.length);
 
-    const ollamaAvailable = await isOllamaAvailable();
-    let modelFixedCode = finalCode;
-
-    if (errors.length > 0) {
-      if (ollamaAvailable) {
-        modelFixedCode = await callOllama(finalCode, errors);
-
-        const validationResult = await runESLint(modelFixedCode);
-        if (validationResult.errors.length === 0) {
-          finalCode = modelFixedCode;
-        } else {
-          console.warn('Model introduced new errors; reverting to ESLint output.');
-        }
-      }
-
+    if (errors.length === 0) {
       return NextResponse.json({
         errores: errors,
-        resumen: errors.length === 0
-          ? 'Code automatically fixed by ESLint.'
-          : ollamaAvailable
-            ? 'Automatic fixes applied and additional refactor attempted.'
-            : 'Automatic fixes applied. Ollama not available for AI refactoring.',
-        codigoCorregido: finalCode,
-        mode: ollamaAvailable ? 'full' : 'demo',
-        demoMessage: ollamaAvailable ? undefined : DEMO_MESSAGE,
+        resumen: 'Code automatically fixed by ESLint.',
+        codigoCorregido: eslintFixedCode,
+        mode: 'full',
       });
+    }
+
+    const ollamaAvailable = await checkOllamaAvailability();
+    let finalCode = eslintFixedCode;
+
+    if (ollamaAvailable) {
+      const modelFixedCode = await analyzeWithOllama(eslintFixedCode, errors);
+      finalCode = await validateCorrection(eslintFixedCode, modelFixedCode);
     }
 
     return NextResponse.json({
       errores: errors,
-      resumen: 'Code automatically fixed by ESLint.',
+      resumen: errors.length === 0
+        ? 'Code automatically fixed by ESLint.'
+        : ollamaAvailable
+          ? 'Automatic fixes applied and additional refactor attempted.'
+          : 'Automatic fixes applied. Ollama not available for AI refactoring.',
       codigoCorregido: finalCode,
-      mode: 'full',
+      mode: ollamaAvailable ? 'full' : 'demo',
+      demoMessage: ollamaAvailable ? undefined : DEMO_MESSAGE,
     });
   } catch (error: unknown) {
     console.error('Error in analyze:', error);
