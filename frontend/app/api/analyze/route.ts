@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ESLint } from 'eslint';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface LintMessage {
   message: string;
@@ -127,8 +128,59 @@ ${code}
   }
 }
 
-async function analyzeWithGemini(_code: string, _errors: LintMessage[]): Promise<string | null> {
-  return null;
+function detectLanguage(code: string): string {
+  if (/^\s*(import\s|export\s|const\s|let\s|var\s|function\s|class\s|=>\s*{)/m.test(code)) return 'javascript';
+  if (/^\s*(def |import |from |class |print\()/m.test(code)) return 'python';
+  if (/^\s*(use\s|fn\s|let\s|mut\s|impl\s)/m.test(code)) return 'rust';
+  if (/^\s*(package\s|import\s|func\s|var\s|:=)/m.test(code)) return 'go';
+  if (/^\s*(#include\s|int\s|void\s|char\s)/m.test(code)) return 'c';
+  return 'javascript';
+}
+
+async function analyzeWithGemini(code: string, errors: LintMessage[], language?: string): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const errorList = errors
+      .map(e => `- ${e.message} (${e.ruleId || 'unknown'}) at line ${e.line || '?'}`)
+      .join('\n');
+
+    const prompt = `
+You are an expert code linter and fixer. Your task is to correct the following ${language || 'javascript'} code so that it passes all ESLint rules.
+
+The following errors were reported:
+
+${errorList}
+
+Rules to apply:
+- Remove any unused variables, functions, or imports.
+- Replace 'var' with 'const' or 'let' as appropriate.
+- Use strict equality (===) instead of loose equality (==).
+- Add missing semicolons.
+- Do not change the logic or behavior of the code.
+- Return ONLY the corrected code, without any explanations, comments, or markdown formatting.
+
+Here is the code to fix:
+
+${code}
+`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    let text = response.text().trim();
+    text = text.replace(/^```[\w]*\n?|```$/g, '').trim();
+
+    return text || null;
+  } catch (error: unknown) {
+    console.error('Error calling Gemini:', error);
+    return null;
+  }
 }
 
 async function validateCorrection(originalCode: string, correctedCode: string): Promise<string> {
@@ -171,22 +223,37 @@ export async function POST(req: Request) {
 
     const ollamaAvailable = await checkOllamaAvailability();
     let finalCode = eslintFixedCode;
+    let usedProvider: 'ollama' | 'gemini' | null = null;
 
     if (ollamaAvailable) {
       const modelFixedCode = await analyzeWithOllama(eslintFixedCode, errors);
       finalCode = await validateCorrection(eslintFixedCode, modelFixedCode);
+      usedProvider = 'ollama';
     }
+
+    if (!usedProvider) {
+      const language = detectLanguage(eslintFixedCode);
+      const geminiResult = await analyzeWithGemini(eslintFixedCode, errors, language);
+      if (geminiResult) {
+        finalCode = await validateCorrection(eslintFixedCode, geminiResult);
+        usedProvider = 'gemini';
+      }
+    }
+
+    const isDemo = usedProvider === null;
 
     return NextResponse.json({
       errores: errors,
       resumen: errors.length === 0
         ? 'Code automatically fixed by ESLint.'
-        : ollamaAvailable
+        : usedProvider === 'ollama'
           ? 'Automatic fixes applied and additional refactor attempted.'
-          : 'Automatic fixes applied. Ollama not available for AI refactoring.',
+          : usedProvider === 'gemini'
+            ? 'Automatic fixes applied via Gemini and additional refactor attempted.'
+            : 'Automatic fixes applied. No AI provider available for refactoring.',
       codigoCorregido: finalCode,
-      mode: ollamaAvailable ? 'full' : 'demo',
-      demoMessage: ollamaAvailable ? undefined : DEMO_MESSAGE,
+      mode: isDemo ? 'demo' : 'full',
+      demoMessage: isDemo ? DEMO_MESSAGE : undefined,
     });
   } catch (error: unknown) {
     console.error('Error in analyze:', error);
