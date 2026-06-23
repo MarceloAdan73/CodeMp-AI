@@ -9,6 +9,25 @@ interface DemoBannerProps {
   isError?: boolean;
 }
 
+function AlertTriangleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
 export default function DemoBanner({ message, isVisible, onClose, isError }: DemoBannerProps) {
   return (
     <AnimatePresence>
@@ -17,25 +36,40 @@ export default function DemoBanner({ message, isVisible, onClose, isError }: Dem
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className={isError ? 'bg-red-900/30 border border-red-700/50 rounded-lg p-4 mx-4 mt-4 flex items-start gap-3' : 'bg-amber-900/30 border border-amber-700/50 rounded-lg p-4 mx-4 mt-4 flex items-start gap-3'}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className={`mx-2 md:mx-4 mt-2 rounded-xl border backdrop-blur-sm ${
+            isError
+              ? 'bg-red-950/40 border-red-800/40'
+              : 'bg-amber-950/30 border-amber-800/30'
+          }`}
         >
-          <span className={isError ? 'text-red-500 text-lg' : 'text-amber-500 text-lg'}>⚠️</span>
-          <div className="flex-1">
-            <p className={isError ? 'text-red-200/80 text-sm' : 'text-amber-200/80 text-sm'}>{message}</p>
-            {!isError && (
-              <code className="text-xs text-amber-400/70 mt-2 block font-mono bg-amber-950/30 px-2 py-1 rounded">
-                ollama pull qwen2.5-coder:1.5b
-              </code>
+          <div className="flex items-start gap-3 px-4 py-3">
+            <div className={`${isError ? 'text-red-400' : 'text-amber-400'}`}>
+              <AlertTriangleIcon />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-sm ${isError ? 'text-red-200/80' : 'text-amber-200/80'}`}>
+                {message}
+              </p>
+              {!isError && (
+                <code className="inline-block mt-1.5 text-[11px] font-mono bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded text-amber-300/60">
+                  ollama pull qwen2.5-coder:1.5b
+                </code>
+              )}
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className={`p-1 rounded-md transition ${
+                  isError
+                    ? 'text-red-400/60 hover:text-red-300 hover:bg-red-500/10'
+                    : 'text-amber-400/60 hover:text-amber-300 hover:bg-amber-500/10'
+                }`}
+              >
+                <XIcon />
+              </button>
             )}
           </div>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className={isError ? 'text-red-500 hover:text-red-400 transition' : 'text-amber-500 hover:text-amber-400 transition'}
-            >
-              ✕
-            </button>
-          )}
         </motion.div>
       )}
     </AnimatePresence>

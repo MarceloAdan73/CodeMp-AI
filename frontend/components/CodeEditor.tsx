@@ -194,29 +194,28 @@ const CodeEditor = forwardRef<CodeEditorRef, Props>(({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#111113]">
+    <div className="flex flex-col h-full bg-[#0a0a0f] rounded-xl border border-white/[0.06] overflow-hidden">
 
       {/* TOP BAR */}
-      <div className="h-12 flex items-center justify-between px-4 border-b border-white/5">
-        <select
-          value={language.id}
-          onChange={(e) => handleLanguageChange(e.target.value)}
-          className="bg-[#1a1a1f] text-gray-200 border border-white/10 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
-        >
-          {LANGUAGES.map(lang => (
-            <option
-              key={lang.id}
-              value={lang.id}
-              className="bg-[#1a1a1f] text-gray-200"
-            >
-              {lang.icon} {lang.name}
-            </option>
-          ))}
-        </select>
-
-        <span className="text-xs text-gray-500">
-          Select code to analyze
-        </span>
+      <div className="h-11 flex items-center justify-between px-4 border-b border-white/[0.04]">
+        <div className="flex items-center gap-2">
+          <select
+            value={language.id}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            className="appearance-none bg-white/[0.04] text-white/70 border border-white/[0.06] rounded-lg px-3 py-1.5 pr-7 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-blue-500/50 cursor-pointer"
+          >
+            {LANGUAGES.map(lang => (
+              <option
+                key={lang.id}
+                value={lang.id}
+                className="bg-[#1a1a24] text-white/80"
+              >
+                {lang.icon} {lang.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <span className="text-[11px] text-white/20 font-mono">{language.id === 'python' ? '.py' : '.ts'}</span>
       </div>
 
       {/* EDITOR */}

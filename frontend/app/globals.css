@@ -10,21 +10,12 @@
     --primary-dark: #2563eb;
     --text-primary: #e5e5e5;
     --text-secondary: #9ca3af;
-    --accent-glow: rgba(59, 130, 246, 0.5);
+    --accent-glow: rgba(59, 130, 246, 0.15);
   }
 
   body {
     background-color: var(--background);
     color: var(--text-primary);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  }
-
-  .font-space {
-    font-family: 'Space Grotesk', sans-serif;
-  }
-  
-  .font-mono-custom {
-    font-family: 'JetBrains Mono', monospace;
   }
 }
 

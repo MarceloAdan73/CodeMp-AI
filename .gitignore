@@ -39,5 +39,15 @@ next-env.d.ts
 # Testing
 /coverage
 
+# Python
+__pycache__/
+*.pyc
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Backup files
+*.backup
+
 # Misc
 *.pem

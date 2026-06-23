@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 
 interface Props {
@@ -14,22 +15,35 @@ export default function DiffViewer({ oldCode, newCode, showDiff, onClose, onAppl
   if (!showDiff) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div className="bg-[#1a1a1f] rounded-lg w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col border border-white/10">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-          <h3 className="text-lg font-semibold text-white">Code Changes Preview</h3>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-[#12121a] rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col border border-white/[0.08] shadow-2xl"
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+          <div className="flex items-center gap-2.5">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+            <h3 className="text-sm font-semibold text-white/90">Code Changes Preview</h3>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition"
+            className="w-6 h-6 rounded-md bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-white/40 hover:text-white/70 transition text-xs"
           >
             ✕
           </button>
         </div>
 
-        {/* Diff Viewer */}
-        <div className="flex-1 overflow-auto p-4 bg-[#111113]">
+        <div className="flex-1 overflow-auto p-4 bg-[#0a0a0f]">
           <ReactDiffViewer
             oldValue={oldCode}
             newValue={newCode}
@@ -37,7 +51,7 @@ export default function DiffViewer({ oldCode, newCode, showDiff, onClose, onAppl
             useDarkTheme={true}
             styles={{
               diffContainer: {
-                background: '#111113',
+                background: '#0a0a0f',
                 fontSize: '13px',
                 fontFamily: 'JetBrains Mono, monospace',
               },
@@ -45,10 +59,10 @@ export default function DiffViewer({ oldCode, newCode, showDiff, onClose, onAppl
                 padding: '0 8px',
               },
               gutter: {
-                background: '#1a1a1f',
-                color: '#666',
+                background: '#12121a',
+                color: '#555',
                 padding: '0 8px',
-                borderRight: '1px solid #2a2a2f',
+                borderRight: '1px solid #222',
               },
               marker: {
                 backgroundColor: 'transparent',
@@ -58,32 +72,31 @@ export default function DiffViewer({ oldCode, newCode, showDiff, onClose, onAppl
                 padding: '2px 0',
               },
               wordAdded: {
-                background: '#1e3a2e',
+                background: '#1a3a2a',
                 color: '#b3f0d0',
               },
               wordRemoved: {
-                background: '#4a1e1e',
+                background: '#3a1a1a',
                 color: '#fbbbbb',
               },
               lineNumber: {
-                color: '#666',
+                color: '#555',
               },
               emptyLine: {
                 background: 'transparent',
               },
               emptyGutter: {
-                background: '#1a1a1f',
-                borderRight: '1px solid #2a2a2f',
+                background: '#12121a',
+                borderRight: '1px solid #222',
               },
             }}
           />
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-white/10">
+        <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-white/[0.06]">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-300 hover:text-white transition"
+            className="px-4 py-2 text-sm text-white/50 hover:text-white/80 transition"
           >
             Cancel
           </button>
@@ -92,12 +105,12 @@ export default function DiffViewer({ oldCode, newCode, showDiff, onClose, onAppl
               onApply();
               onClose();
             }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-sm transition"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg text-sm font-medium transition shadow-lg shadow-blue-600/20"
           >
             Apply Changes
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
