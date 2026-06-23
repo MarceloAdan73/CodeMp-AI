@@ -1,87 +1,116 @@
 # CodeMp-AI
 
-![CI](https://github.com/MarceloAdan73/CodeMp-AI/actions/workflows/ci.yml/badge.svg)
-
-AI-powered code analysis and automatic code fixing tool that combines **ESLint** with a local AI model (**Ollama**) for intelligent suggestions.
-
-[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/)
-[![ESLint](https://img.shields.io/badge/ESLint-9.24.0-4B32C3)](https://eslint.org/)
-[![Ollama](https://img.shields.io/badge/Ollama-0.17.4-5A4FCF)](https://ollama.ai/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Production_Ready-success)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)]()
-[![Last Commit](https://img.shields.io/github/last-commit/MarceloAdan73/CodeMp-AI)]()
-
-## Demo
-
-**Try it now:** [https://code-mp-ai.vercel.app](https://code-mp-ai.vercel.app)
-
-> **Note:** The interface works online. AI requires local Ollama (see [Requirements](#requirements)).
-
-## 💡 Why CodeMp-AI?
-
-Demonstrates local AI (Ollama) integration with Next.js, including:
-
-- 🤖 **Local models** - no external APIs or server costs
-- 🎨 **Professional UX** with animated loading states (3 stages)
-- 🛡️ **Smart validation** against AI errors
-- 🚀 **Modern architecture** (Next.js 15, TypeScript, Tailwind)
-- 🌐 **Demo mode** that works on Vercel without Ollama
+AI-powered code analysis and automatic code fixing tool that combines **ESLint** (JS/TS) and **Ruff** (Python) with multi-provider AI support via **SantanderAI/llm_bridge** microservice.
 
 ## Features
 
 - **Code editor** with support for TypeScript, TSX, JavaScript, and Python
-- **ESLint analysis** with automatic fixes
-- **Local AI with Ollama** for intelligent suggestions
+- **ESLint analysis** for JavaScript/TypeScript with automatic fixes
+- **Ruff analysis** for Python with automatic fixes
+- **AI model selector** — elige proveedor desde la UI (Auto, Ollama, Gemini, Claude)
+- **Multi-provider AI** (Ollama, Gemini, Claude, Grok) for intelligent suggestions
+- **llm_bridge microservice** (Python) as unified AI backend
 - **Preview changes** before applying corrections
-- **Persistent history** of analyses
+- **Export reports** to Markdown
+- **Auto-detect language** when pasting code
+- **Persistent history** of analyses (last 5)
 - **Direct navigation** from errors to code lines
 - **Responsive** for desktop and mobile
-- **Demo mode** when Ollama is not available
+- **Demo/Mock mode** when no AI provider is available
+- **Provider error feedback** — mensajes claros si falla un proveedor (key inválida, servidor caído, etc.)
+- **Backend Python tests** (pytest) + Frontend tests (Jest)
 
 ## Requirements
 
 - [Node.js](https://nodejs.org/) 18+
-- [Ollama](https://ollama.com/download)
-- Model `qwen2.5-coder:1.5b`
-
-```bash
-ollama pull qwen2.5-coder:1.5b
-```
-
-### Changing the Model
-
-To use a different model, edit `frontend/app/api/analyze/route.ts` line 69:
-
-```typescript
-model: 'deepseek-coder:1.3b'  // Faster
-```
-
-| Model | Speed | Accuracy |
-|-------|-------|----------|
-| `deepseek-coder:1.3b` | 8-12s | Medium |
-| `qwen2.5-coder:1.5b` | 15-25s | Good |
-| `deepseek-coder:6.7b` | 30-45s | High |
+- [Python](https://python.org/) 3.9+
+- [Ollama](https://ollama.com/download) (optional — for local AI)
 
 ## Installation
 
+### 1. Backend (Python microservice)
+
 ```bash
-git clone https://github.com/MarceloAdan73/CodeMp-AI.git
-cd CodeMp-AI/frontend
+cd backend
+python -m venv venv
+source venv/Scripts/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+```
+
+Microservice at `http://localhost:5000`.
+
+### 2. Frontend (Next.js)
+
+```bash
+cd frontend
 npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
 
+### 3. Quick Start (both services)
+
+```bash
+# Terminal 1: Backend
+cd backend && source venv/Scripts/activate && python app.py
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+```
+
+### 4. Configure API Keys (optional)
+
+- **Gemini**: Create a free API key at https://aistudio.google.com/apikey
+- **Claude**: Set `ANTHROPIC_API_KEY` in `backend/.env`
+- **Ollama**: No key needed (local), run `ollama pull qwen2.5-coder:1.5b`
+
+Edit `backend/.env` and `frontend/.env.local`:
+
+```env
+GEMINI_API_KEY=tu_key_aqui
+```
+
+## Architecture
+
+```
+┌──────────────┐     POST /api/analyze     ┌──────────────────────┐
+│              │  ──────────────────────▶  │                      │
+│   Frontend   │                           │  Next.js API Route   │
+│  (Next.js)   │  ◀──────────────────────  │  (route.ts)          │
+│              │       JSON Response       │                      │
+└──────────────┘                           └──────────┬───────────┘
+                                                      │
+                                              POST /chat
+                                                      │
+                                                      ▼
+                                       ┌──────────────────────┐
+                                       │                      │
+                                       │  llm_bridge Service  │
+                                       │  (Python/Flask)      │
+                                       │  :5000               │
+                                       │                      │
+                                       └──┬──────┬──────┬─────┘
+                                          │      │      │
+                             ┌────────────┘      │      └────────────┐
+                             ▼                    ▼                   ▼
+                     ┌──────────────┐   ┌──────────────┐   ┌────────────────┐
+                     │   Ollama     │   │    Gemini    │   │ Claude / Grok  │
+                     │   (local)    │   │   (cloud)    │   │    (cloud)     │
+                     └──────────────┘   └──────────────┘   └────────────────┘
+```
+
 ## Usage
 
-1. Select a programming language
-2. Write or paste your code
-3. Press `Run Analysis` or `Ctrl+Enter`
-4. Review errors in the right panel
-5. Use `Preview Changes` to see diffs or `Apply Fix` to apply
+1. Select a programming language (TypeScript, TSX, JavaScript, Python)
+2. Choose AI provider from the dropdown (Auto, Ollama, Gemini, or Claude)
+3. Write or paste your code — language auto-detects
+4. Press `Run Analysis` or `Ctrl+Enter`
+5. Review errors in the right panel
+6. Use `Preview Changes` to see diffs or `Apply Fix` to apply
+7. Export report with 📄 button
+8. History with `Ctrl+H`
 
 ### Keyboard Shortcuts
 
@@ -91,78 +120,102 @@ Open [http://localhost:3000](http://localhost:3000)
 | `Ctrl+H` | View history |
 | `ESC` | Close modal |
 
-## 📸 Screenshots
+## AI Providers
 
-### Desktop
+### Auth & Error Messages
 
-| Editor | Problems Panel | Changes Preview |
-|--------|---------------|----------------|
-| ![Editor](frontend/public/editor-code.png) | ![Problems](frontend/public/problems-panel.png) | ![Diff](frontend/public/modal-diff.png) |
+| Provider | How to configure | Si falla, muestra |
+|----------|-----------------|-------------------|
+| **Mock** | None | — |
+| **Ollama** | `ollama pull qwen2.5-coder:1.5b` | "Ollama: servidor no disponible. ¿Está corriendo?" |
+| **Gemini** | `GEMINI_API_KEY` en `.env` | "Gemini: API key inválida. Conseguí una gratis en https://aistudio.google.com/apikey" |
+| **Claude** | `ANTHROPIC_API_KEY` en `.env` | "Claude: API key no configurada o inválida" |
+| **Grok** | `XAI_API_KEY` en `.env` | "Grok: API key no configurada o inválida" |
 
-### Mobile & History
+### Default models
 
-| Mobile View | History | Demo Banner |
-|-------------|---------|-------------|
-| ![Mobile](frontend/public/mobile-view.png) | ![History](frontend/public/history-modal.png) | ![Demo](frontend/public/demo-banner.png) |
+| Provider | Default model |
+|----------|--------------|
+| Ollama | `qwen2.5-coder:1.5b` |
+| Gemini | `gemini-2.0-flash` |
+| Claude | `claude-sonnet-4-20250514` |
+| Grok | `grok-3-mini-fast-latest` |
 
-> **Note:** For Vercel, set the `frontend` folder as the project root.
+### Error scenarios detectadas
 
-## ESLint Configuration
+- API key inválida o vencida → mensaje claro con link para obtener key gratis
+- Servidor no disponible (Ollama caído) → mensaje de conexión
+- Cuota agotada (rate limit) → mensaje de espera
+- Autenticación fallida → mensaje de revisar key
 
-Rules enabled in `eslint.config.js`:
+## Linting
 
-```javascript
-rules: {
-  semi: ['error', 'always'],
-  quotes: ['error', 'single'],
-  indent: ['error', 2],
-  'no-var': 'error',
-  'prefer-const': 'error',
-  'no-unused-vars': 'error',
-  'eqeqeq': ['error', 'always'],
-}
-```
+### ESLint (JavaScript / TypeScript)
+
+Rules: `semi`, `quotes`, `indent`, `no-var`, `prefer-const`, `no-unused-vars`, `eqeqeq`.
+
+### Ruff (Python)
+
+Default ruleset (F, E, W). Auto-fixes unused imports, unused variables, PEP 8 style.
 
 ## Project Structure
 
 ```
-frontend/
-├── app/
-│   ├── api/
-│   │   ├── analyze/route.ts    # API: ESLint + Ollama
-│   │   └── health/route.ts     # Ollama health check
-│   ├── page.tsx                # Main page
-│   └── layout.tsx              # Root layout
-├── components/
-│   ├── CodeEditor.tsx          # CodeMirror editor
-│   ├── DiffViewer.tsx          # Changes viewer
-│   ├── AnalysisSkeleton.tsx    # Loading states
-│   └── DemoBanner.tsx          # Demo mode banner
-└── hooks/
-    └── useTheme.tsx            # Theme provider
+CodeMp-AI/
+├── backend/
+│   ├── app.py                   # Flask API (/chat, /health, /lint)
+│   ├── requirements.txt         # Python dependencies
+│   ├── .env                     # API keys config
+│   ├── tests/
+│   │   └── test_service.py      # 7 tests (pytest)
+│   └── venv/                    # Virtual environment
+├── frontend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── analyze/route.ts # ESLint/Ruff + AI pipeline
+│   │   │   └── health/route.ts  # AI health check
+│   │   ├── page.tsx             # Main UI
+│   │   └── layout.tsx           # Server layout with metadata
+│   ├── components/
+│   │   ├── CodeEditor.tsx       # CodeMirror 6 editor
+│   │   ├── DiffViewer.tsx       # Changes diff viewer
+│   │   ├── AnalysisSkeleton.tsx # 3-stage loading animation
+│   │   └── DemoBanner.tsx       # Provider error/demo banner
+│   ├── __tests__/               # Jest tests
+│   └── package.json             # Uses --webpack flag
+├── SANTADER-IA/
+│   ├── 04_PLAN_ACCION_AGENTE.md
+│   └── 06_PLAN_COLABORACION_SANTANDER.md
+├── .github/workflows/ci.yml
+└── README.md
 ```
 
-## 🗺️ Roadmap
+## What remains to test
 
-- [ ] AI model selector in UI
-- [ ] Support for more languages (Java, Go, Rust)
-- [ ] Export reports (PDF/Markdown)
-- [ ] Share code via URL
-- [ ] Automated tests with Jest
+- [ ] Obtener una API key de Gemini válida y probar flujo completo con Gemini
+- [ ] Probar Ollama local con `ollama pull qwen2.5-coder:1.5b` y verificar que Apply Fix funcione
+- [ ] Configurar `ANTHROPIC_API_KEY` y probar Claude
+- [ ] Probar modo "Auto" fallback (ej: Ollama caído → Gemini → Claude)
+- [ ] Verificar que el export de reportes funcione con providers reales (no solo demo)
+- [ ] Probar en mobile (responsive)
+- [ ] Verificar que el hot-reload de Webpack funciona correctamente
+
+## Known Issues
+
+- Turbopack requiere CPU con soporte BMI2 → se usa `--webpack` en el script `dev`
+- Gemini API key actual (`[REDACTED]`) es inválida
+- Ollama necesita `api_key='ollama'` dummy en el backend (solución implementada)
 
 ## Technologies
 
-- **Next.js 15** - React Framework
-- **TypeScript** - Static typing
-- **Tailwind CSS** - Styling
-- **CodeMirror 6** - Code editor
-- **ESLint 9** - Linting
-- **Ollama** - Local AI engine
+- **Next.js 16** (con Webpack, no Turbopack)
+- **TypeScript** + **Tailwind CSS**
+- **CodeMirror 6** - Editor
+- **ESLint 9** - JS/TS linting
+- **Ruff** - Python linting
+- **Python 3 + Flask** - Backend microservice
+- **SantanderAI/llm_bridge** - LLM client library
 - **Framer Motion** - Animations
-
-## Contributing
-
-Contributions are welcome. Open an [issue](https://github.com/MarceloAdan73/CodeMp-AI/issues) or [PR](https://github.com/MarceloAdan73/CodeMp-AI/pulls).
 
 ## License
 

@@ -13,18 +13,6 @@
     --accent-glow: rgba(59, 130, 246, 0.5);
   }
 
-  [data-theme="light"] {
-    --background: #f8fafc;
-    --card: #ffffff;
-    --card-hover: #f1f5f9;
-    --border: #e2e8f0;
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --accent-glow: rgba(59, 130, 246, 0.3);
-  }
-
   body {
     background-color: var(--background);
     color: var(--text-primary);

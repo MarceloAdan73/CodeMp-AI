@@ -5,7 +5,7 @@
   "description": "CodeMp-AI: AI-powered code analysis with ESLint and Ollama",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "test": "jest"

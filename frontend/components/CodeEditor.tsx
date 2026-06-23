@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import { useState, forwardRef, useImperativeHandle, useRef } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
@@ -109,6 +109,14 @@ export interface CodeEditorRef {
   goToLine: (_line: number) => void;
 }
 
+function detectLanguage(code: string): string | null {
+  if (/^\s*(import\s|export\s|const\s|let\s|var\s|function\s|class\s|=>\s*{)/m.test(code)) return 'typescript';
+  if (/^\s*(def |import |from |class |print\()/m.test(code)) return 'python';
+  if (/^\s*(use\s|fn\s|let\s|mut\s|impl\s)/m.test(code)) return 'rust';
+  if (/^\s*(package\s|import\s|func\s|var\s|:=)/m.test(code)) return 'go';
+  return null;
+}
+
 const CodeEditor = forwardRef<CodeEditorRef, Props>(({
   value: _value,
   onSelection: _onSelection,
@@ -117,6 +125,7 @@ const CodeEditor = forwardRef<CodeEditorRef, Props>(({
 }, ref) => {
   const [language, setLanguage] = useState(LANGUAGES[0]);
   const [editorView, setEditorView] = useState<EditorView | null>(null);
+  const lastDetected = useRef<string | null>(null);
 
   const onSelection = _onSelection;
   const onCodeChange = _onCodeChange;
@@ -170,7 +179,17 @@ const CodeEditor = forwardRef<CodeEditorRef, Props>(({
   };
 
   const handleCodeChange = (newCode: string) => {
-    // Pasar el nuevo código al padre
+    if (newCode.length > 20) {
+      const detected = detectLanguage(newCode);
+      if (detected && detected !== lastDetected.current) {
+        lastDetected.current = detected;
+        const lang = LANGUAGES.find(l => l.id === detected);
+        if (lang && lang.id !== language.id) {
+          setLanguage(lang);
+          if (onLanguageChange) onLanguageChange(lang.id);
+        }
+      }
+    }
     onCodeChange(newCode);
   };
 

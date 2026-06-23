@@ -1,0 +1,7 @@
+flask>=3.0
+llm-bridge @ git+https://github.com/SantanderAI/llm_bridge.git
+openai>=1.0.0
+anthropic>=0.30
+gunicorn>=22.0
+python-dotenv>=1.0
+ruff>=0.15

@@ -1,22 +1,13 @@
 import { NextResponse } from 'next/server';
 
-async function isOllamaAvailable(): Promise<boolean> {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    const response = await fetch('http://localhost:11434/api/tags', {
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
+const LLM_BRIDGE_URL = process.env.LLM_BRIDGE_URL || 'http://localhost:5000';
 
 export async function GET() {
-  const ollamaAvailable = await isOllamaAvailable();
-  return NextResponse.json({ available: ollamaAvailable });
+  try {
+    const response = await fetch(`${LLM_BRIDGE_URL}/health`);
+    const data = await response.json();
+    return NextResponse.json({ available: data.status === 'ok' });
+  } catch {
+    return NextResponse.json({ available: false });
+  }
 }
