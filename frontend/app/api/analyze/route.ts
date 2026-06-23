@@ -137,8 +137,8 @@ async function runRuff(code: string) {
 }
 
 function detectLanguage(code: string): string {
-  if (/^\s*(import\s|export\s|const\s|let\s|var\s|function\s|class\s|=>\s*{)/m.test(code)) return 'javascript';
-  if (/^\s*(def |import |from |class |print\()/m.test(code)) return 'python';
+  if (/^\s*(def |import [a-zA-Z_]|from \S+ import |class |print\()/m.test(code)) return 'python';
+  if (/^\s*(import\s*[{\*]|import\s+\w+\s+from|export\s|const\s|let\s|var\s|function\s|class\s|=>\s*{)/m.test(code)) return 'javascript';
   if (/^\s*(use\s|fn\s|let\s|mut\s|impl\s)/m.test(code)) return 'rust';
   if (/^\s*(package\s|import\s|func\s|var\s|:=)/m.test(code)) return 'go';
   if (/^\s*(#include\s|int\s|void\s|char\s)/m.test(code)) return 'c';

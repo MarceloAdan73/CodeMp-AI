@@ -530,7 +530,7 @@ CodeMp-AI/
 │   ├── 02_analisis_integracion_codemp.md
 │   ├── 03_analisis_completo_codemp_ai.md
 │   ├── 04_PLAN_ACCION_AGENTE.md      # ✅ Este archivo (v2.0)
-│   └── 05_api_real_llm_bridge.md     # Documentación detallada de API real
+
 └── README.md                         # ACTUALIZADO — arquitectura, providers, instalación
 ```
 

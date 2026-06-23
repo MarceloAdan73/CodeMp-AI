@@ -3,7 +3,7 @@
 **Fecha:** 2026-06-20 (original) / 2026-06-20 (corregido)
 **Propósito:** Evaluación para posible integración en CodeMp-AI
 
-> **✅ ESTE INFORME ES CORRECTO para `SantanderAI/llm_bridge`** (v0.1.0, instalado desde GitHub). La API descrita aquí (`create_llm`, provider `mock`, `LLMResponse`) es la que se usa en `backend/app.py`. El archivo `05_api_real_llm_bridge.md` describe una biblioteca diferente (`windsnow1025/LLM-Bridge` v2.0.8 en PyPI) que **no es la que se integró en el proyecto**.
+> **✅ ESTE INFORME ES CORRECTO para `SantanderAI/llm_bridge`** (v0.1.0, instalado desde GitHub). La API descrita aquí (`create_llm`, provider `mock`, `LLMResponse`) es la que se usa en `backend/app.py`.
 
 ---
 
