@@ -9,9 +9,9 @@ interface AnalysisSkeletonProps {
 }
 
 const stages: { id: AnalysisStage; label: string; icon: string; messages: string[] }[] = [
-  { id: 'eslint', label: 'ESLint', icon: 'L', messages: ['Analizando con ESLint...', 'Detectando errores...', 'Escaneando codigo...'] },
-  { id: 'ia', label: 'IA', icon: 'AI', messages: ['Procesando con IA...', 'Generando recomendaciones...', 'Analizando contexto...'] },
-  { id: 'validating', label: 'Validacion', icon: 'V', messages: ['Validando resultados...', 'Preparando salida...', 'Verificando integridad...'] },
+  { id: 'eslint', label: 'Linter', icon: 'L', messages: ['Running linter analysis...', 'Detecting issues...', 'Scanning code...'] },
+  { id: 'ia', label: 'AI', icon: 'AI', messages: ['Processing with AI...', 'Generating suggestions...', 'Analyzing context...'] },
+  { id: 'validating', label: 'Validation', icon: 'V', messages: ['Validating results...', 'Preparing output...', 'Verifying integrity...'] },
 ];
 
 function getCurrentStageIndex(stage: AnalysisStage): number {

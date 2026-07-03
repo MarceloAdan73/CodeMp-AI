@@ -31,7 +31,7 @@ interface ProviderAttempt {
 }
 
 const LLM_BRIDGE_URL = process.env.LLM_BRIDGE_URL || 'http://localhost:5000';
-const DEMO_MESSAGE = '⚠️ Demo mode: AI not available. Start the microservice with: cd backend && python app.py';
+const DEMO_MESSAGE = 'AI backend not running — AI-powered refactoring is unavailable.';
 
 function buildErrorList(errors: LintMessage[]): string {
   return errors
@@ -146,42 +146,42 @@ function detectLanguage(code: string): string {
 }
 
 const PROVIDER_SETUP: Record<string, string> = {
-  google: '❌ Gemini: API key inválida o no configurada. Creá una gratis en https://aistudio.google.com/apikey',
-  openai: '❌ Ollama: servidor no disponible. Instalá Ollama desde https://ollama.com/download y ejecutá: ollama pull qwen2.5-coder:1.5b',
-  claude: '❌ Claude: API key no configurada. Agregá ANTHROPIC_API_KEY en backend/.env',
-  grok: '❌ Grok: API key no configurada. Agregá XAI_API_KEY en backend/.env',
+  google: 'Gemini: Invalid or missing API key. Create one at https://aistudio.google.com/apikey',
+  openai: 'Ollama: Server not running. See https://ollama.com for installation.',
+  claude: 'Claude: API key not configured. Add ANTHROPIC_API_KEY to backend/.env',
+  grok: 'Grok: API key not configured. Add XAI_API_KEY to backend/.env',
 };
 
 function friendlyError(provider: string, raw: string): string {
   const lower = raw.toLowerCase();
-  // Connection refused → provider not running
+  // Connection refused → provider not running (Ollama) or network issue (cloud APIs)
   if (lower.includes('econnrefused') || lower.includes('econnreset') || lower.includes('connection refused')) {
     if (provider === 'openai') return PROVIDER_SETUP.openai;
-    return `❌ ${provider}: servidor no disponible. Revisá que esté corriendo.`;
+    return `${provider}: Connection refused. Check your network and API endpoint.`;
   }
   // Invalid API key
   if (lower.includes('api_key_invalid') || lower.includes('api key not valid')) {
-    return '❌ Gemini: API key inválida. Creá una gratis en https://aistudio.google.com/apikey';
+    return 'Gemini: Invalid API key. Create one at https://aistudio.google.com/apikey';
   }
   // Missing or empty API key
   if (lower.includes('api key') || lower.includes('api_key')) {
     if (provider === 'openai') return PROVIDER_SETUP.openai;
-    return PROVIDER_SETUP[provider] || `❌ ${provider}: API key no configurada. Revisá backend/.env`;
+    return PROVIDER_SETUP[provider] || `${provider}: API key not configured. Check backend/.env.`;
   }
   // Quota / rate limit
   if (lower.includes('429') || lower.includes('quota') || lower.includes('rate limit')) {
-    return `❌ ${provider}: cuota agotada. Intentá de nuevo más tarde.`;
+    return `${provider}: Quota exhausted. Try again later.`;
   }
   // Auth error
   if (lower.includes('401') || lower.includes('unauthorized')) {
-    return `❌ ${provider}: autenticación fallida. Revisá tu API key.`;
+    return `${provider}: Authentication failed. Check your API key.`;
   }
   // Generic connection error
   if (lower.includes('connect') || lower.includes('timeout') || lower.includes('fetch')) {
     if (provider === 'openai') return PROVIDER_SETUP.openai;
-    return `❌ ${provider}: no se pudo conectar. Revisá que el servidor esté disponible.`;
+    return `${provider}: Connection failed. Check your network configuration.`;
   }
-  return PROVIDER_SETUP[provider] || `❌ ${provider}: ${raw}`;
+  return `${provider}: ${raw}. See README.md for setup instructions.`;
 }
 
 async function analyzeWithBridge(config: BridgeRequest): Promise<BridgeResponse | { error: string } | null> {

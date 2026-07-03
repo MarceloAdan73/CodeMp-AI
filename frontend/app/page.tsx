@@ -258,7 +258,7 @@ export default function Home() {
       `# CodeMp AI - Analysis Report`,
       ``,
       `**Date:** ${date}`,
-      `**Provider:** ${analysis.usedProvider || 'None (demo)'}`,
+      `**Provider:** ${analysis.usedProvider || 'None'}`,
       `**Mode:** ${analysis.mode}`,
       `**Total errors:** ${analysis.errores.length}`,
       ``,
@@ -393,7 +393,7 @@ export default function Home() {
         message={
           analysis?.providerError
             ? analysis.providerError
-            : analysis?.demoMessage || 'IA no disponible. Para probar correcciones con IA: ollama pull qwen2.5-coder:1.5b'
+            : analysis?.demoMessage || 'AI backend not running. Linting works, but AI corrections require the backend service.'
         }
         isVisible={demoMode}
         onClose={() => setDemoMode(false)}

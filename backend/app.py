@@ -89,7 +89,8 @@ def chat():
                 config['api_key'] = 'ollama'
             llm = create_llm(config)
         elif provider in ('google', 'gemini'):
-            llm = create_llm({'provider': 'google', 'model': model})
+            api_key = os.environ.get('GOOGLE_AI_STUDIO_API_KEY') or os.environ.get('GEMINI_API_KEY')
+            llm = create_llm({'provider': 'google', 'model': model, 'api_key': api_key})
         elif provider == 'claude':
             llm = build_claude_client(model)
         elif provider == 'grok':

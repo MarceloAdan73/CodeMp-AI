@@ -52,9 +52,9 @@ export default function DemoBanner({ message, isVisible, onClose, isError }: Dem
                 {message}
               </p>
               {!isError && (
-                <code className="inline-block mt-1.5 text-[11px] font-mono bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded text-amber-300/60">
-                  ollama pull qwen2.5-coder:1.5b
-                </code>
+                <p className="mt-1.5 text-[11px] text-amber-300/40">
+                  See README.md for setup instructions
+                </p>
               )}
             </div>
             {onClose && (

@@ -611,10 +611,84 @@ CodeMp-AI/
 
 ## Qué queda por probar
 
-- [ ] Obtener Gemini API key válida y probar flujo completo
+- [x] Obtener Gemini API key válida y probar flujo completo ✅ (2026-06-27)
 - [ ] Probar Ollama local con `ollama pull qwen2.5-coder:1.5b`
 - [ ] Configurar `ANTHROPIC_API_KEY` y probar Claude
 - [ ] Probar modo "Auto" con fallback entre proveedores
 - [ ] Verificar export reporte con provider real
 - [ ] Probar responsive mobile
 - [ ] Verificar hot-reload de Webpack
+
+---
+
+# FASE 8: PRUEBA LOCAL CON GEMINI — ✅ COMPLETADA
+
+**Fecha:** 2026-06-27
+**Objetivo:** Configurar y probar Gemini como proveedor IA
+
+## Estado
+
+| Componente | Estado |
+|------------|--------|
+| API Key Gemini (AIza...) | ✅ Configurada en `backend/.env` y `frontend/.env.local` |
+| Backend Flask | ✅ Corriendo en `http://localhost:5000` |
+| Frontend Next.js | ✅ Corriendo en `http://localhost:3000` (con `--webpack`) |
+| Integración Frontend→Backend | ✅ Funcional |
+| ESLint/Ruff | ✅ Detecta y corrige errores |
+| Gemini API | ⚠️ Key válida pero cuota agotada (resource_exhausted) |
+
+## Cambios realizados
+
+### 1. Configuración de API Key
+- **`backend/.env`**: Añadida variable `GOOGLE_AI_STUDIO_API_KEY` con la key de AI Studio
+- **`frontend/.env.local`**: Actualizada con la misma key
+
+### 2. Fix: `app.py` — API key no se pasaba a llm_bridge
+- **Problema:** `create_llm()` no recibía la API key de Google explícitamente
+- **Error:** `"Missing key inputs argument! To use the Google AI API, provide (api_key) arguments."`
+- **Solución:** Añadir `api_key` al config dict:
+  ```python
+  elif provider in ('google', 'gemini'):
+      api_key = os.environ.get('GOOGLE_AI_STUDIO_API_KEY') or os.environ.get('GEMINI_API_KEY')
+      llm = create_llm({'provider': 'google', 'model': model, 'api_key': api_key})
+  ```
+
+## Resultado de pruebas
+
+### Backend directo (curl)
+```bash
+curl -X POST http://localhost:5000/chat -d '{"provider":"google","model":"gemini-2.0-flash","messages":[...]}'
+```
+- **Resultado:** `429 RESOURCE_EXHAUSTED` — key autenticada correctamente, cuota agotada
+
+### Flujo completo (Frontend → Backend → ESLint)
+```bash
+curl -X POST http://localhost:3000/api/analyze -d '{"code":"...","provider":"mock"}'
+```
+- **Resultado:** ESLint detectó 2 errores, código corregido devuelto correctamente
+- **Modo:** demo (sin proveedor IA activo)
+
+### Mock provider
+```bash
+curl -X POST http://localhost:5000/chat -d '{"provider":"mock","messages":[...]}'
+```
+- **Resultado:** `{"content":"[mock] Hello","total_tokens":3,"latency_ms":0}` ✅
+
+## Próximos pasos
+
+1. **Esperar reseteo de cuota Gemini** (medianoche Pacifico) o habilitar billing en Google Cloud
+2. Probar flujo completo con Gemini activo
+3. Probar fallback automático (Ollama → Gemini → Claude)
+4. Continuar con Fase 4 (Docker) o Fase 6 (Colaboración Santander)
+
+## Archivos modificados en esta sesión
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/app.py` | Añadido `api_key` al config de Google en `create_llm()` |
+| `backend/.env` | Variable `GOOGLE_AI_STUDIO_API_KEY` con key de AI Studio |
+| `frontend/.env.local` | Actualizada `GEMINI_API_KEY` y añadida `GOOGLE_AI_STUDIO_API_KEY` |
+
+---
+
+*Documento actualizado el 2026-06-27 tras prueba local con Gemini.*
