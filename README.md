@@ -32,10 +32,12 @@ AI-powered code analysis and automatic code fixing tool that combines **ESLint**
 
 ```bash
 cd backend
+cp .env.example .env             # Create config file
 python -m venv venv
-source venv/Scripts/activate  # Windows: venv\Scripts\activate
+source venv/Scripts/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-pip install ruff              # Python linter
+pip install ruff                  # Python linter
+# Edit .env and add your API keys
 python app.py
 ```
 
@@ -63,15 +65,12 @@ cd frontend && npm run dev
 
 ### 4. Configure API Keys (optional)
 
-- **Gemini**: Create a free API key at https://aistudio.google.com/apikey
-- **Claude**: Set `ANTHROPIC_API_KEY` in `backend/.env`
+API keys only go in `backend/.env`. Copy from `.env.example` and fill in:
+
+- **Gemini**: `GOOGLE_AI_STUDIO_API_KEY` — get a free key at https://aistudio.google.com/apikey
+- **Claude**: `ANTHROPIC_API_KEY` — requires a paid Anthropic account
+- **Grok**: `XAI_API_KEY` — requires an xAI account
 - **Ollama**: No key needed (local), run `ollama pull qwen2.5-coder:1.5b`
-
-Edit `backend/.env` and `frontend/.env.local`:
-
-```env
-GEMINI_API_KEY=your_key_here
-```
 
 ## Architecture
 
