@@ -49,5 +49,8 @@ venv/
 # Backup files
 *.backup
 
+# Planning docs (local only)
+SANTADER-IA/
+
 # Misc
 *.pem
