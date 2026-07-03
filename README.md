@@ -35,6 +35,7 @@ cd backend
 python -m venv venv
 source venv/Scripts/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+pip install ruff              # Python linter
 python app.py
 ```
 
@@ -183,27 +184,23 @@ CodeMp-AI/
 │   │   └── DemoBanner.tsx       # Provider error/demo banner
 │   ├── __tests__/               # Jest tests
 │   └── package.json             # Uses --webpack flag
-├── SANTADER-IA/
-│   ├── 04_PLAN_ACCION_AGENTE.md
-│   └── 06_PLAN_COLABORACION_SANTANDER.md
 ├── .github/workflows/ci.yml
 └── README.md
 ```
 
 ## What remains to test
 
-- [ ] Obtener una API key de Gemini válida y probar flujo completo con Gemini
 - [ ] Probar Ollama local con `ollama pull qwen2.5-coder:1.5b` y verificar que Apply Fix funcione
 - [ ] Configurar `ANTHROPIC_API_KEY` y probar Claude
+- [ ] Configurar `XAI_API_KEY` y probar Grok
 - [ ] Probar modo "Auto" fallback (ej: Ollama caído → Gemini → Claude)
 - [ ] Verificar que el export de reportes funcione con providers reales (no solo demo)
 - [ ] Probar en mobile (responsive)
-- [ ] Verificar que el hot-reload de Webpack funciona correctamente
 
 ## Known Issues
 
-- Turbopack requiere CPU con soporte BMI2 → se usa `--webpack` en el script `dev`
-- Gemini API key actual (`[REDACTED]`) es inválida
+- Turbopack requiere CPU con soporte BMI2 → el script `dev` usa `--webpack` por defecto
+- Gemini API key actual (`[REDACTED]`) tiene cuota agotada (resource_exhausted)
 - Ollama necesita `api_key='ollama'` dummy en el backend (solución implementada)
 
 ## Technologies
