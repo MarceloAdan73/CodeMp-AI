@@ -200,7 +200,7 @@ CodeMp-AI/
 ## Known Issues
 
 - Turbopack requires CPU with BMI2 support → the `dev` script uses `--webpack` by default
-- Current Gemini API key (`[REDACTED]`) has exhausted quota (resource_exhausted)
+- Current Gemini API key has exhausted quota (resource_exhausted) — replace with a valid key in `.env`
 - Ollama needs a dummy `api_key='ollama'` in the backend (workaround implemented)
 
 ## Technologies
