@@ -7,7 +7,7 @@ AI-powered code analysis and automatic code fixing tool that combines **ESLint**
 - **Code editor** with support for TypeScript, TSX, JavaScript, and Python
 - **ESLint analysis** for JavaScript/TypeScript with automatic fixes
 - **Ruff analysis** for Python with automatic fixes
-- **AI model selector** — elige proveedor desde la UI (Auto, Ollama, Gemini, Claude)
+- **AI model selector** — choose provider from the UI (Auto, Ollama, Gemini, Claude)
 - **Multi-provider AI** (Ollama, Gemini, Claude, Grok) for intelligent suggestions
 - **llm_bridge microservice** (Python) as unified AI backend
 - **Preview changes** before applying corrections
@@ -17,7 +17,7 @@ AI-powered code analysis and automatic code fixing tool that combines **ESLint**
 - **Direct navigation** from errors to code lines
 - **Responsive** for desktop and mobile
 - **Demo/Mock mode** when no AI provider is available
-- **Provider error feedback** — mensajes claros si falla un proveedor (key inválida, servidor caído, etc.)
+- **Provider error feedback** — clear messages when a provider fails (invalid key, server down, etc.)
 - **Backend Python tests** (pytest) + Frontend tests (Jest)
 
 ## Requirements
@@ -70,7 +70,7 @@ cd frontend && npm run dev
 Edit `backend/.env` and `frontend/.env.local`:
 
 ```env
-GEMINI_API_KEY=tu_key_aqui
+GEMINI_API_KEY=your_key_here
 ```
 
 ## Architecture
@@ -125,13 +125,13 @@ GEMINI_API_KEY=tu_key_aqui
 
 ### Auth & Error Messages
 
-| Provider | How to configure | Si falla, muestra |
-|----------|-----------------|-------------------|
+| Provider | How to configure | Error message |
+|----------|-----------------|---------------|
 | **Mock** | None | — |
-| **Ollama** | `ollama pull qwen2.5-coder:1.5b` | "Ollama: servidor no disponible. ¿Está corriendo?" |
-| **Gemini** | `GEMINI_API_KEY` en `.env` | "Gemini: API key inválida. Conseguí una gratis en https://aistudio.google.com/apikey" |
-| **Claude** | `ANTHROPIC_API_KEY` en `.env` | "Claude: API key no configurada o inválida" |
-| **Grok** | `XAI_API_KEY` en `.env` | "Grok: API key no configurada o inválida" |
+| **Ollama** | `ollama pull qwen2.5-coder:1.5b` | "Ollama: server not available. Is it running?" |
+| **Gemini** | `GEMINI_API_KEY` in `.env` | "Gemini: invalid API key. Get a free one at https://aistudio.google.com/apikey" |
+| **Claude** | `ANTHROPIC_API_KEY` in `.env` | "Claude: API key not configured or invalid" |
+| **Grok** | `XAI_API_KEY` in `.env` | "Grok: API key not configured or invalid" |
 
 ### Default models
 
@@ -142,12 +142,12 @@ GEMINI_API_KEY=tu_key_aqui
 | Claude | `claude-sonnet-4-20250514` |
 | Grok | `grok-3-mini-fast-latest` |
 
-### Error scenarios detectadas
+### Detected error scenarios
 
-- API key inválida o vencida → mensaje claro con link para obtener key gratis
-- Servidor no disponible (Ollama caído) → mensaje de conexión
-- Cuota agotada (rate limit) → mensaje de espera
-- Autenticación fallida → mensaje de revisar key
+- Invalid or expired API key → clear message with link to get a free key
+- Server unavailable (Ollama down) → connection error message
+- Quota exhausted (rate limit) → wait and retry message
+- Authentication failed → check your key message
 
 ## Linting
 
@@ -190,22 +190,22 @@ CodeMp-AI/
 
 ## What remains to test
 
-- [ ] Probar Ollama local con `ollama pull qwen2.5-coder:1.5b` y verificar que Apply Fix funcione
-- [ ] Configurar `ANTHROPIC_API_KEY` y probar Claude
-- [ ] Configurar `XAI_API_KEY` y probar Grok
-- [ ] Probar modo "Auto" fallback (ej: Ollama caído → Gemini → Claude)
-- [ ] Verificar que el export de reportes funcione con providers reales (no solo demo)
-- [ ] Probar en mobile (responsive)
+- [ ] Test Ollama locally with `ollama pull qwen2.5-coder:1.5b` and verify Apply Fix works
+- [ ] Configure `ANTHROPIC_API_KEY` and test Claude
+- [ ] Configure `XAI_API_KEY` and test Grok
+- [ ] Test "Auto" fallback mode (e.g. Ollama down → Gemini → Claude)
+- [ ] Verify report export works with real providers (not just demo)
+- [ ] Test on mobile (responsive)
 
 ## Known Issues
 
-- Turbopack requiere CPU con soporte BMI2 → el script `dev` usa `--webpack` por defecto
-- Gemini API key actual (`[REDACTED]`) tiene cuota agotada (resource_exhausted)
-- Ollama necesita `api_key='ollama'` dummy en el backend (solución implementada)
+- Turbopack requires CPU with BMI2 support → the `dev` script uses `--webpack` by default
+- Current Gemini API key (`[REDACTED]`) has exhausted quota (resource_exhausted)
+- Ollama needs a dummy `api_key='ollama'` in the backend (workaround implemented)
 
 ## Technologies
 
-- **Next.js 16** (con Webpack, no Turbopack)
+- **Next.js 16** (with Webpack, not Turbopack)
 - **TypeScript** + **Tailwind CSS**
 - **CodeMirror 6** - Editor
 - **ESLint 9** - JS/TS linting
